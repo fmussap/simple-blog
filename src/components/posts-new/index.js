@@ -1,8 +1,8 @@
 'use strict'
 
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Field, reduxForm } from 'redux-form'
 
 class PostsNew extends Component {
   render () {
@@ -13,10 +13,20 @@ class PostsNew extends Component {
             Back
           </Link>
         </div>
-        Posts New
+        <form>
+          <div>
+            <Field
+              name='title'
+              component='input'
+              type='text'
+            />
+          </div>
+        </form>
       </div>
     )
   }
 }
 
-export default connect(null, null)(PostsNew)
+export default reduxForm({
+  form: 'PostsNewForm'
+})(PostsNew)
