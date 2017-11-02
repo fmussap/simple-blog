@@ -1,15 +1,20 @@
 'use strict'
 
 import React, { PureComponent } from 'react'
+import { BrowserRouter, Route } from 'react-router-dom'
 
-import './css/style.css'
+import PostsIndex from 'components/posts-index'
+import PostsNew from 'components/posts-new'
 
 class App extends PureComponent {
   render () {
     return (
-      <div>
-        Blog
-      </div>
+      <BrowserRouter>
+        <div>
+          <Route exact path='/' component={PostsIndex} />
+          <Route path='/posts/new' component={PostsNew} />
+        </div>
+      </BrowserRouter>
     )
   }
 }
