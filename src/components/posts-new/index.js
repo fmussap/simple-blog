@@ -3,24 +3,37 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { Field, reduxForm } from 'redux-form'
+import { connect } from 'react-redux'
+
+import { createPost } from 'actions'
 
 class PostsNew extends Component {
   constructor () {
     super()
+    this.backPostsList = () => {
+      this.props.history.push('/')
+    }
     this.onSubmit = (values) => {
-      console.log('values', values)
+      this.props.createPost(values, this.backPostsList)
     }
   }
   renderField (field) {
+    const { meta: { touched, error }, label, input } = field
+    const classNameCheck = touched && error
+      ? 'form-group has-danger'
+      : 'form-group'
+
     return (
-      <div className='form-group'>
-        <label>{field.label}</label>
+      <div className={classNameCheck}>
+        <label>{label}</label>
         <input
           className='form-control'
           type='text'
-          {...field.input}
+          {...input}
         />
-        {field.meta.error}
+        <div className='text-help'>
+          {touched ? error : ''}
+        </div>
       </div>
     )
   }
@@ -28,12 +41,7 @@ class PostsNew extends Component {
   render () {
     const { handleSubmit } = this.props
     return (
-      <div>
-        <div className='text-xs-right'>
-          <Link to='/' className='btn btn-primary'>
-            Back
-          </Link>
-        </div>
+      <div style={{ padding: 10 }}>
         <form onSubmit={handleSubmit(this.onSubmit)}>
           <Field
             name='title'
@@ -50,7 +58,10 @@ class PostsNew extends Component {
             label='Post Content'
             component={this.renderField}
           />
-          <button type='submit' className='btn btn-primary'>Submit</button>
+          <button type='submit' className='btn btn-success'>Add</button>
+          <Link style={{ marginLeft: 10 }} to='/' className='btn btn-danger'>
+            Cancel
+          </Link>
         </form>
       </div>
     )
@@ -84,4 +95,4 @@ const validate = values => {
 export default reduxForm({
   validate,
   form: 'PostsNewForm'
-})(PostsNew)
+})(connect(null, { createPost })(PostsNew))

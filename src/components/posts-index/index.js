@@ -2,11 +2,19 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { fetchPosts } from 'actions'
+import { fetchPosts, deletePost } from 'actions'
 import _ from 'lodash'
 import { Link } from 'react-router-dom'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 class PostsIndex extends Component {
+  constructor () {
+    super()
+    this.handleDelete = (id) => {
+      this.props.deletePost(id, () => null)
+    }
+  }
+
   componentDidMount () {
     this.props.fetchPosts()
   }
@@ -17,7 +25,15 @@ class PostsIndex extends Component {
       return _.map(myPosts, post => {
         return (
           <li className='list-group-item' key={post.id}>
-            {post.title}
+            <Link to={`/posts/show/${post.id}`}>
+              {post.title}
+            </Link>
+            <button
+              className='btn btn-danger pull-xs-right'
+              onClick={() => this.handleDelete(post.id)}
+            >
+              Delete
+            </button>
           </li>
         )
       })
@@ -25,7 +41,7 @@ class PostsIndex extends Component {
   }
   render () {
     return (
-      <div>
+      <div style={{ padding: 10 }}>
         <div className='text-xs-right'>
           <Link to='/posts/new' className='btn btn-primary'>
             Add a Post
@@ -33,15 +49,21 @@ class PostsIndex extends Component {
         </div>
         <h3>Posts</h3>
         <ul className='list-group'>
-          {this.renderPosts()}
+          <ReactCSSTransitionGroup
+            transitionName='fade'
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={500}
+          >
+            {this.renderPosts()}
+          </ReactCSSTransitionGroup>
         </ul>
       </div>
     )
   }
 }
 
-const mapStateToProps = state => ({
-  posts: state.PostsReducer
+const mapStateToProps = ({ posts }) => ({
+  posts
 })
 
-export default connect(mapStateToProps, { fetchPosts })(PostsIndex)
+export default connect(mapStateToProps, { fetchPosts, deletePost })(PostsIndex)
